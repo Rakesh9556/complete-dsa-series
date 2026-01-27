@@ -53,9 +53,18 @@ class Queue {
                 return;
             }
 
-            for(int i = front; i <= rear; (i + 1) % MAX_SIZE) {
+            int i = front;
+            while(true) {
                 cout << arr[i] << " ";
+
+                if(i == rear) break;
+
+                i = (i + 1) % MAX_SIZE;
             }
+        }
+
+        int size() {
+            
         }
 };
 
