@@ -32,6 +32,13 @@ class BST {
             }
         }
 
+        TreeNode* findMin(TreeNode* root) {
+            if(root && root->left) {
+                root = findMin(root->left);
+            }
+            return root;
+        }
+
     public:
         BST(): root(nullptr) {};
 
@@ -42,7 +49,7 @@ class BST {
         void insert(int val) {
             insertBST(root, val);
         }
-
+        
         void levelorder(TreeNode* root) {
             // if tree empty
             if(!root) return;
@@ -117,6 +124,59 @@ class BST {
             deleteTree(root->right);
             delete root;
         }
+
+        void deleteVal(TreeNode* &root, int val) {
+            // if empty
+            if(!root) return;
+
+            // find elem
+            if(val < root->data) {
+                deleteVal(root->left, val);
+            }
+            else if(val > root->data) {
+                deleteVal(root->right, val);
+            }
+            else {
+                // solve for case 1 & 2
+                if(!root->left && !root->right) {
+                    delete root;
+                    root = nullptr;
+                    return;
+                }
+                else if(!root->right) {
+                    TreeNode* temp = root;
+                    root = root->left;
+                    delete temp;
+                    return;
+                }
+                else if(!root->left) {
+                    TreeNode* temp = root;
+                    root = root->right;
+                    delete temp;
+                    return;
+                }
+                else { // case 3
+                    TreeNode* min = findMin(root->right);
+                    root->data = min->data;
+
+                    // delete the min node
+                    deleteVal(root->right, min->data);
+
+                }
+            }
+        }
+
+        bool searchBST(TreeNode* root, int key) {
+            if(!root) return false;
+            if(root->data == key) return true;
+
+            if(key < root->data) {
+                return searchBST(root->left, key);
+            }
+            else {
+                return searchBST(root->right, key);
+            }
+        }
 };
 
 int main() {
@@ -151,6 +211,13 @@ int main() {
 
     cout << "\nLevelorder: ";
     bst.levelorder(root);
+    
+    cout << "\nElement found: " << bst.searchBST(root, 27);
+
+    bst.deleteVal(root, 27);
+
+    cout << "\nElement found: " << bst.searchBST(root, 27);
+
 
     // delete
     bst.deleteTree(root);
@@ -158,6 +225,7 @@ int main() {
 
     cout << "\nLevelorder: ";
     bst.levelorder(root);
+
 
 
 }
